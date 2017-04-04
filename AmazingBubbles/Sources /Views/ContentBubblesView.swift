@@ -40,6 +40,7 @@ open class ContentBubblesView: UIView {
     open lazy var collisionBehavior: UICollisionBehavior = {
         let collision = UICollisionBehavior()
         collision.collisionMode = UICollisionBehaviorMode.everything
+        
         return collision
     }()
     
@@ -247,6 +248,8 @@ extension ContentBubblesView {
     internal func removeOddViews(for count: Int) {
         if count >= bubbleViews.count { return }
         let countToDelete = count - bubbleViews.count
+        
+        if countToDelete < 1 { return }
         
         (1...countToDelete).forEach { (_) in
             let viewToRemove = bubbleViews.removeLast()
