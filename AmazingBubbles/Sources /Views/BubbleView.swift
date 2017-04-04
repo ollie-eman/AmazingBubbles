@@ -20,7 +20,7 @@ open class BubbleView: UIView {
         }
     }
     
-    var contentColor: UIColor = UIColor(red: 79 / 255, green: 156 / 255, blue: 213 / 255, alpha: 1)
+    open var contentColor: UIColor = UIColor(red: 79 / 255, green: 156 / 255, blue: 213 / 255, alpha: 1)
     
     open override func draw(_ rect: CGRect) {
         let circleRect = rect.insetBy(dx: 1, dy: 1)
