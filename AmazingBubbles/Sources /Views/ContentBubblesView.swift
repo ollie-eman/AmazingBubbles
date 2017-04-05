@@ -101,10 +101,13 @@ open class ContentBubblesView: UIView {
     
     open func reload(randomizePosition: Bool = false) {
         guard let dataSource = dataSource else {
-            removeViewsFromBehaviors()
-            removeViews()
             return
         }
+        
+        removeViewsFromBehaviors()
+        removeViews()
+        
+        
         countOfSizes = dataSource.countOfSizes?(in: self) ?? 3
         minimalSizeForItem = delegate?.minimalSizeForBubble?(in: self) ?? BubbleConstants.minimalSizeForItem
         maximumSizeForItem = delegate?.maximumSizeForBubble?(in: self) ?? BubbleConstants.maximumSizeForItem
@@ -319,16 +322,17 @@ public extension ContentBubblesView {
             return
         }
         
-        toggleBubble(bubbleView: bubbleView)
-    }
-    
-    public func toggleBubble(bubbleView: BubbleView) {
-        
         guard let index = bubbleViews.index(of: bubbleView) else {
             fatalError("No such bubbleView in content View")
         }
         
         delegate?.contentBubblesView?(self, didSelectItemAt: index)
+        
+        toggleBubble(bubbleView: bubbleView, atIndex: index)
+    }
+    
+    public func toggleBubble(bubbleView: BubbleView, atIndex index: Int) {
+        
         let shouldChangeSize = delegate?.contentBubblesView?(self, shouldChangeSizeForItemAt: index) ?? true
         if !shouldChangeSize {
             return
