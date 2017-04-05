@@ -18,6 +18,8 @@ class ViewController: UIViewController {
         }
     }
     
+    var selectedBubbleIndex: Int?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         bubblesView.reload(randomizePosition: true)
@@ -35,18 +37,43 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: ContentBubblesViewDelegate {
+    
+    func minimalSizeForBubble(in view: ContentBubblesView) -> CGSize {
+        return CGSize(width: 100, height: 100)
+    }
+    
+    func maximumSizeForBubble(in view: ContentBubblesView) -> CGSize {
+        return CGSize(width: 150, height: 150)
+    }
+    
     func contentBubblesView(_ view: ContentBubblesView, didSelectItemAt index: Int) {
         if let labelView = view.bubbleViews[index] as? LabelBubbleView {
             labelView.imageView.isHidden = labelView.currentSize == 3
             labelView.label.isHidden = labelView.currentSize != 3
             labelView.label.text = "Hello, \(index)"
         }
+        
+        if let selectedIndex = selectedBubbleIndex, selectedIndex != index {
+            // a previous bubble was selected and is different to the one that was just selected
+            let oldBubble = view.bubbleViews[selectedIndex]
+            view.toggleBubble(bubbleView: oldBubble)
+        }
+        
+        selectedBubbleIndex = index
     }
+    
+//    func contentBubblesView(_ view: ContentBubblesView, sizeForItemAt index: Int) -> CGSize {
+//        return CGSize(width: 150, height: 150)
+//    }
+//    
+//    func contentBubblesView(_ view: ContentBubblesView, selectedSizeForItemAt index: Int) -> CGSize {
+//        return CGSize(width: 180, height: 180)
+//    }
 }
 
 extension ViewController: ContentBubblesViewDataSource {
     func countOfSizes(in view: ContentBubblesView) -> Int {
-        return 3
+        return 2
     }
     
     func numberOfItems(in view: ContentBubblesView) -> Int {
@@ -71,4 +98,6 @@ extension ViewController: ContentBubblesViewDataSource {
                             size: .zero)
         return view
     }
+    
+    
 }

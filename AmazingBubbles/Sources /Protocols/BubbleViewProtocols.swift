@@ -15,6 +15,27 @@ import Foundation
     @objc optional func contentBubblesView(_ view: ContentBubblesView, didSelectItemAt index: Int)
     @objc optional func contentBubblesView(_ view: ContentBubblesView, shouldChangeSizeForItemAt index: Int) -> Bool
     @objc optional func contentBubblesView(_ view: ContentBubblesView, didChangeSizeForItemAt index: Int)
+
+    /// Enables the implementer to provide a size for a standard item at an index
+    ///
+    /// - Parameters:
+    ///   - view: The content bubbles view
+    ///   - index: The index of the item
+    ///
+    /// - Returns: The size of the item
+    ///
+    @objc optional func contentBubblesView(_ view: ContentBubblesView, sizeForItemAt index: Int) -> CGSize
+    
+    
+    /// Enables the implementer to provide a size for a selected item at an index
+    ///
+    /// - Parameters:
+    ///   - view: The content bubbles view
+    ///   - index: The index of the item
+    ///
+    /// - Returns: The size of the selected state of the item
+    ///
+    @objc optional func contentBubblesView(_ view: ContentBubblesView, selectedSizeForItemAt index: Int) -> CGSize
 }
 
 @objc public protocol ContentBubblesViewDataSource: class {

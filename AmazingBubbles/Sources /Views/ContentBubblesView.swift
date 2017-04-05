@@ -125,6 +125,7 @@ open class ContentBubblesView: UIView {
 
 //MARK: - Items positioning and sizes
 extension ContentBubblesView {
+    
     func calculateSize(for size: Int) -> CGSize {
         assert(size > 0, "Size must be greater than or equal 1")
         
@@ -144,11 +145,20 @@ extension ContentBubblesView {
     }
     
     func randomizeSize() {
-        bubbleViews.forEach { (view) in
-            let randomSize = Int(arc4random_uniform(UInt32(countOfSizes))) % countOfSizes + 1
-            let size = calculateSize(for: randomSize)
-            view.frame = CGRect(origin: view.frame.origin,
-                                size: size)
+        
+        for (index, view) in bubbleViews.enumerated() {
+            
+            var size: CGSize
+            if let delegateSize = delegate?.contentBubblesView?(self, sizeForItemAt: index) {
+                size = delegateSize
+            }
+            else {
+                let randomSize = Int(arc4random_uniform(UInt32(countOfSizes))) % countOfSizes + 1
+                size = calculateSize(for: randomSize)
+            }
+            
+            
+            view.frame = CGRect(origin: view.frame.origin, size: size)
         }
     }
     
@@ -309,6 +319,11 @@ public extension ContentBubblesView {
             return
         }
         
+        toggleBubble(bubbleView: bubbleView)
+    }
+    
+    public func toggleBubble(bubbleView: BubbleView) {
+        
         guard let index = bubbleViews.index(of: bubbleView) else {
             fatalError("No such bubbleView in content View")
         }
@@ -328,7 +343,18 @@ public extension ContentBubblesView {
     internal func changeSize(for view: BubbleView, completion: @escaping () -> Void) {
         let oldSize = view.bounds.size
         view.currentSize = view.currentSize % countOfSizes + 1
-        let newSize = calculateSize(for: view.currentSize)
+        
+        guard let viewIndex = self.bubbleViews.index(of: view) else {
+            print("view does not exist"); return
+        }
+        
+        var newSize: CGSize
+        if let newDelegateSize = delegate?.contentBubblesView?(self, selectedSizeForItemAt: viewIndex) {
+            newSize = newDelegateSize
+        }
+        else {
+            newSize = calculateSize(for: view.currentSize)
+        }
         
         let deltaW = newSize.width - oldSize.width
         let deltaH = newSize.height - oldSize.height
