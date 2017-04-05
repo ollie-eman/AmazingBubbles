@@ -352,13 +352,19 @@ public extension ContentBubblesView {
             print("view does not exist"); return
         }
         
-        var newSize: CGSize
-        if let newDelegateSize = delegate?.contentBubblesView?(self, selectedSizeForItemAt: viewIndex) {
-            newSize = newDelegateSize
+        var newSize = calculateSize(for: view.currentSize)
+        
+        if view.currentSize == 2 { // the bubble is expanding
+            if let newDelegateSize = delegate?.contentBubblesView?(self, selectedSizeForItemAt: viewIndex) {
+                newSize = newDelegateSize
+            }
         }
-        else {
-            newSize = calculateSize(for: view.currentSize)
+        else { // the bubble is contracting
+            if let newDelegateSize = delegate?.contentBubblesView?(self, sizeForItemAt: viewIndex) {
+                newSize = newDelegateSize
+            }
         }
+        
         
         let deltaW = newSize.width - oldSize.width
         let deltaH = newSize.height - oldSize.height
@@ -380,10 +386,10 @@ public extension ContentBubblesView {
             let newOrigin = CGPoint(x: view.frame.origin.x - deltaW / 2,
                                     y: view.frame.origin.y - deltaH / 2)
             
+            view.frame = CGRect(origin:newOrigin, size: newSize)
             UIView.animate(withDuration: BubbleConstants.growAnimationDuration, animations: {
-                view.frame = CGRect(origin:newOrigin,
-                                    size: newSize)
-                view.layoutSubviews()
+                view.setNeedsLayout()
+                view.layoutIfNeeded()
                 
             }, completion: { (_) in
                 self.bubbleViews.forEach { self.gravityBehavior.addItem($0) }
